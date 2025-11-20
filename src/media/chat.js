@@ -1,5 +1,6 @@
 const vscode = acquireVsCodeApi();
-const inputBox = document.getElementById('input');
+const customInput = document.getElementById('custom-input');
+const inputWrapper = document.getElementById('input-wrapper');
 const sendBtn = document.getElementById('send');
 const messagesBox = document.getElementById('messages');
 const typingIndicator = document.getElementById('typing-indicator');
@@ -71,19 +72,19 @@ const appendMessage = (sender, text) => {
 
 const sendMessage = () => {
     if (generating) return;
-    const text = [...codeSnippets.map(s => "```" + s + "```"), inputBox.value.trim()]
-        .filter(Boolean)
-        .join("\n\n");
+    const text = [
+        ...codeSnippets.map(s => "```" + s + "```"),
+        customInput.innerText.trim()
+    ].filter(Boolean).join("\n\n");
+
     codeSnippets = [];
     snippetContainer.innerHTML = "";
-    inputBox.classList.remove("with-snippets");
+    customInput.innerText = "";
 
     if (!text) return;
 
-    inputBox.value = '';
     generating = true;
-    inputBox.disabled = true;
-    inputBox.classList.add('loading');
+    inputWrapper.classList.add('loading');
     sendBtn.disabled = true;
     sendBtn.classList.add('loading');
     typingIndicator.style.display = 'block'; // show animated typing
@@ -97,21 +98,19 @@ function addCodeSnippet(text) {
     const code = makeEl('pre', { children: [makeEl('code', { text })] });
     hljs.highlightElement(code);
 
-    const bubble = makeElCs('div', 'snippet-bubble', { children: [code, deleteBtn] });
+    const bubble = makeElCs('div', 'snippet-bubble', { children: [deleteBtn, code] });
 
     const removeSnippet = () => {
         snippetContainer.removeChild(bubble);
         codeSnippets = codeSnippets.filter(s => s !== text);
-        if (codeSnippets.length === 0) {
-            inputBox.classList.remove('with-snippets');
-        }
     };
     deleteBtn.addEventListener('click', removeSnippet);
 
     snippetContainer.appendChild(bubble);
 
     codeSnippets = [...codeSnippets, text];
-    inputBox.classList.add('with-snippets');
+
+    customInput.focus();
 }
 
 window.addEventListener('message', (event) => {
@@ -119,21 +118,18 @@ window.addEventListener('message', (event) => {
     if (msg.type === 'reply' && msg.sender === 'bot') {
         appendMessage(msg.sender, msg.text);
         generating = false;
-        inputBox.disabled = false;
-        inputBox.classList.remove('loading');
+        inputWrapper.classList.remove('loading');
         sendBtn.disabled = false;
         sendBtn.classList.remove('loading');
         typingIndicator.style.display = 'none';
     }
 
     if (msg.type === 'insert-snippet') {
-        console.log(msg.code);
         if (msg.code) addCodeSnippet(msg.code);
     }
 });
 
-// Button and Ctrl+Enter handler
 sendBtn.onclick = sendMessage;
-inputBox.addEventListener('keydown', (e) => {
+inputWrapper.addEventListener('keydown', (e) => {
     if (e.key === 'Enter' && e.ctrlKey) sendMessage();
 });
