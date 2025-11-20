@@ -92,28 +92,26 @@ const sendMessage = () => {
 };
 
 function addCodeSnippet(text) {
-    codeSnippets.push(text);
+    const deleteBtn = makeElCs('span', 'snippet-delete', { text: '×' });
 
-    const bubble = document.createElement("div");
-    bubble.className = "snippet-bubble";
+    const code = makeEl('pre', { children: [makeEl('code', { text })] });
+    hljs.highlightElement(code);
 
-    bubble.innerHTML = `
-        <code>${text}</code>
-        <span class="snippet-delete">×</span>
-    `;
+    const bubble = makeElCs('div', 'snippet-bubble', { children: [code, deleteBtn] });
 
-    const deleteBtn = bubble.querySelector(".snippet-delete");
-
-    deleteBtn.onclick = () => {
+    const removeSnippet = () => {
         snippetContainer.removeChild(bubble);
         codeSnippets = codeSnippets.filter(s => s !== text);
         if (codeSnippets.length === 0) {
-            inputBox.classList.remove("with-snippets");
+            inputBox.classList.remove('with-snippets');
         }
     };
+    deleteBtn.addEventListener('click', removeSnippet);
 
     snippetContainer.appendChild(bubble);
-    inputBox.classList.add("with-snippets");
+
+    codeSnippets = [...codeSnippets, text];
+    inputBox.classList.add('with-snippets');
 }
 
 window.addEventListener('message', (event) => {
