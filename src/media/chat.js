@@ -8,31 +8,64 @@ const snippetContainer = document.getElementById('snippet-container');
 let codeSnippets = [];
 let generating = false;
 
-const appendMessage = (sender, text) => {
-    const div = document.createElement('div');
-    div.classList.add('message', sender);
+function makeEl(tag, { clss, id, text, html, attrs = {}, on = {}, children = [] } = {}) {
+    const element = document.createElement(tag);
+    if (clss) element.className = clss;
+    if (id) element.id = id;
+    if (text) element.textContent = text;
+    if (html) element.innerHTML = html;
 
-    const now = new Date();
-    const timestamp = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    for (const [key, value] of Object.entries(attrs)) {
+        element.setAttribute(key, value);
+    }
 
-    div.innerHTML = `
-        <div style="display:flex; justify-content:space-between; align-items:flex-start;">
-            <span class="content">${marked.parse(text)}</span>
-            <button class="copy-btn" title="Copy message">📋</button>
-        </div>
-        <div style="font-size:0.7em; color:#aaa; margin-top:4px;">${timestamp}</div>
-    `;
+    for (const [event, handler] of Object.entries(on)) {
+        element.addEventListener(event, handler);
+    }
 
-    messagesBox.prepend(div);
+    for (const child of children) {
+        if (child) element.appendChild(child);
+    }
+    return element;
+}
 
-    div.querySelector('.copy-btn').onclick = () => {
-        const content = div.querySelector('.content').innerText;
-        navigator.clipboard.writeText(content).then(() => {
-            const btn = div.querySelector('.copy-btn');
-            btn.textContent = '✅';
-            setTimeout(() => btn.textContent = '📋', 1000);
+function makeElCs(tag, clss = "", attr = {}) {
+    attr.clss = clss;
+    return makeEl(tag, attr);
+}
+
+function makeElCsId(tag, clss = "", id = "", attr = {}) {
+    attr.clss = clss;
+    attr.id = id;
+    return makeEl(tag, attr);
+}
+
+function createMessageBox(sender, text) {
+    const content = makeElCs("span", "content", { html: marked.parse(text) });
+    setTimeout(() => {
+        content.querySelectorAll("pre code").forEach(block => {
+            hljs.highlightElement(block);
+        });
+    });
+
+    const copyBtn = makeElCs("button", "copy-btn", { html: "📋", attrs: { title: "Copy message" } });
+    copyBtn.onclick = () => {
+        navigator.clipboard.writeText(content.innerText).then(() => {
+            copyBtn.textContent = "✅";
+            setTimeout(() => (copyBtn.textContent = "📋"), 1000);
         });
     };
+
+    const timestampEl = makeElCs("div", "timestamp", {
+        text: (new Date()).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
+    });
+    const topRow = makeElCs("div", "message-top", { children: [content, copyBtn] });
+
+    return makeElCs("div", `message ${sender}`, { children: [topRow, timestampEl] });
+}
+
+const appendMessage = (sender, text) => {
+    messagesBox.prepend(createMessageBox(sender, text));
     messagesBox.scrollTo({ top: 0, behavior: 'smooth' });
 };
 

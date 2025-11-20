@@ -23,20 +23,6 @@ body {
     text-align: left;
 }
 
-.copy-btn {
-    background: none;
-    border: none;
-    cursor: pointer;
-    color: #888;
-    font-size: 0.8em;
-    margin-left: 6px;
-    transition: color 0.2s ease;
-}
-
-.copy-btn:hover {
-    color: #fff;
-}
-
 #messages {
     flex: 1;
     overflow-y: auto;
@@ -81,6 +67,23 @@ body {
     overflow-wrap: anywhere;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
     position: relative;
+}
+
+.message-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.message .copy-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #888;
+    font-size: 0.8em;
+    margin-left: 6px;
+    opacity: 0;
+    transition: opacity 0.2s;
 }
 
 .message:hover .copy-btn {
