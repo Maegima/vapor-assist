@@ -1,0 +1,54 @@
+{
+    "name": "vapor-view",
+    "displayName": "Vapor View",
+    "publisher": "maegima",
+    "description": "A simple VS Code extension that adds a chat window.",
+    "version": "0.0.1",
+    "engines": {
+        "vscode": "^1.98.0"
+    },
+    "categories": [
+        "Other"
+    ],
+    "main": "./dist/extension.js",
+    "contributes": {
+        "viewsContainers": {
+            "activitybar": [
+                {
+                    "id": "chatSidebar",
+                    "title": "Chat",
+                    "icon": "resources/chat.svg"
+                }
+            ]
+        },
+        "views": {
+            "chatSidebar": [
+                {
+                    "id": "chatView",
+                    "name": "Chat Window",
+                    "type": "webview"
+                }
+            ]
+        },
+        "commands": [
+            {
+                "command": "chatView.openPanel",
+                "title": "Open Chat Panel"
+            }
+        ]
+    },
+    "scripts": {
+        "vscode:prepublish": "npm run compile",
+        "compile": "tsc -p ./",
+        "watch": "tsc -watch -p ./"
+    },
+    "devDependencies": {
+        "@types/js-yaml": "^4.0.9",
+        "@types/node": "^24.10.1",
+        "@types/vscode": "^1.98.0",
+        "typescript": "^5.0.0"
+    },
+    "dependencies": {
+        "js-yaml": "^4.1.1"
+    }
+}

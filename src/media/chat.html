@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Security-Policy"
+          content="default-src 'none';
+                   style-src 'unsafe-inline' ${webviewCspSource}; 
+                   script-src 'nonce-${nonce}';">
+
+    <title>Interactive Chatbot</title>
+    <link rel="stylesheet" href="${cssUri}">
+</head>
+<body>
+    <div id="typing-indicator" style="display:none;">Bot is typing</div>
+    <div class="container1">
+    <textarea id="input" placeholder="Type a message…"></textarea>
+    <button id="send">Send</button>
+    <div id="messages"></div>
+    </div>
+
+    <script nonce="${nonce}" src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script nonce="${nonce}" src="${jsUri}"></script>
+</body>
+</html>
