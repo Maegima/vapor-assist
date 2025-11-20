@@ -211,6 +211,19 @@ export class ChatViewProvider implements vscode.WebviewViewProvider {
 
         return html;
     }
+
+    addCodeSnipet(editor: vscode.TextEditor) {
+        const selection = editor.document.getText(editor.selection);
+        if (!selection.trim()) {
+            return vscode.window.showWarningMessage('No code selected.');
+        }
+        if (this._view) {
+            this._view.webview.postMessage({
+                type: 'insert-snippet',
+                code: selection
+            });
+        }
+    }
 }
 
 function getNonce() {

@@ -3,7 +3,9 @@ const inputBox = document.getElementById('input');
 const sendBtn = document.getElementById('send');
 const messagesBox = document.getElementById('messages');
 const typingIndicator = document.getElementById('typing-indicator');
+const snippetContainer = document.getElementById('snippet-container');
 
+let codeSnippets = [];
 let generating = false;
 
 const appendMessage = (sender, text) => {
@@ -36,7 +38,13 @@ const appendMessage = (sender, text) => {
 
 const sendMessage = () => {
     if (generating) return;
-    const text = inputBox.value.trim();
+    const text = [...codeSnippets.map(s => "```" + s + "```"), inputBox.value.trim()]
+        .filter(Boolean)
+        .join("\n\n");
+    codeSnippets = [];
+    snippetContainer.innerHTML = "";
+    inputBox.classList.remove("with-snippets");
+
     if (!text) return;
 
     inputBox.value = '';
@@ -50,6 +58,31 @@ const sendMessage = () => {
     vscode.postMessage({ type: 'send', text });
 };
 
+function addCodeSnippet(text) {
+    codeSnippets.push(text);
+
+    const bubble = document.createElement("div");
+    bubble.className = "snippet-bubble";
+
+    bubble.innerHTML = `
+        <code>${text}</code>
+        <span class="snippet-delete">×</span>
+    `;
+
+    const deleteBtn = bubble.querySelector(".snippet-delete");
+
+    deleteBtn.onclick = () => {
+        snippetContainer.removeChild(bubble);
+        codeSnippets = codeSnippets.filter(s => s !== text);
+        if (codeSnippets.length === 0) {
+            inputBox.classList.remove("with-snippets");
+        }
+    };
+
+    snippetContainer.appendChild(bubble);
+    inputBox.classList.add("with-snippets");
+}
+
 window.addEventListener('message', (event) => {
     const msg = event.data;
     if (msg.type === 'reply' && msg.sender === 'bot') {
@@ -60,6 +93,11 @@ window.addEventListener('message', (event) => {
         sendBtn.disabled = false;
         sendBtn.classList.remove('loading');
         typingIndicator.style.display = 'none';
+    }
+
+    if (msg.type === 'insert-snippet') {
+        console.log(msg.code);
+        if (msg.code) addCodeSnippet(msg.code);
     }
 });
 

@@ -33,7 +33,11 @@
         "commands": [
             {
                 "command": "chatView.openPanel",
-                "title": "Open Chat Panel"
+                "title": "Vapor: Open Chat Panel"
+            },
+            {
+                "command": "chatView.addSelectedCode",
+                "title": "Vapor: Add Selected Code as Snippet"
             }
         ]
     },

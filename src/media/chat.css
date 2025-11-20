@@ -42,7 +42,7 @@ body {
     overflow-y: auto;
     display: flex;
     flex-direction: column;
-    scroll-behavior: smooth; /* smooth scrolling */
+    scroll-behavior: smooth;
 }
 
 #messages::before {
@@ -79,7 +79,7 @@ body {
     word-wrap: break-word;
     white-space: normal;
     overflow-wrap: anywhere;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
     position: relative;
 }
 
@@ -111,7 +111,7 @@ body {
     display: inline-block;
     width: 1em;
     text-align: left;
-    animation: ellipsis steps(4,end) 1s infinite;
+    animation: ellipsis steps(4, end) 1s infinite;
 }
 
 @keyframes ellipsis {
@@ -175,6 +175,53 @@ body {
     background-color: #007acc;
     color: #fff;
     border: none;
+}
+
+#input-wrapper {
+    position: relative;
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+#snippet-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    position: absolute;
+    top: 6px;
+    left: 6px;
+    right: 6px;
+    pointer-events: auto;
+}
+
+.snippet-bubble {
+    background-color: #3a3a3a;
+    color: #e5e5e5;
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-family: monospace;
+    display: inline-flex;
+    align-items: center;
+    max-width: 90%;
+}
+
+.snippet-bubble code {
+    white-space: nowrap;
+}
+
+.snippet-delete {
+    margin-left: 6px;
+    cursor: pointer;
+    color: #bbb;
+    font-weight: bold;
+}
+
+.snippet-delete:hover {
+    color: #fff;
+}
+
+#input.with-snippets {
+    padding-top: 48px;
 }
 
 @keyframes pulseGlow {
