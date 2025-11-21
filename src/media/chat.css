@@ -61,7 +61,7 @@ body {
     padding: 10px 14px;
     border-radius: 12px;
     max-width: fit-content;
-    width: fit-content;
+    width: -webkit-fill-available;
     word-wrap: break-word;
     white-space: normal;
     overflow-wrap: anywhere;
@@ -70,7 +70,7 @@ body {
 }
 
 .message-top {
-    display: flex;
+    display: block;
     justify-content: space-between;
     align-items: flex-start;
 }
@@ -83,6 +83,8 @@ body {
     font-size: 0.8em;
     margin-left: 6px;
     opacity: 0;
+    width: -webkit-fill-available;
+    text-align: end;
     transition: opacity 0.2s;
 }
 
@@ -112,14 +114,13 @@ body {
 }
 
 .message pre {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
+    overflow: auto;
     background-color: #0d1117;
 }
 
 .message pre .copy-btn {
     display: flex;
+    flex-direction: row-reverse;
     padding: 6px;
 }
 

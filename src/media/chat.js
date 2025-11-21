@@ -69,7 +69,7 @@ function createMessageBox(sender, text) {
     const timestampEl = makeElCs("div", "timestamp", {
         text: (new Date()).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
     });
-    const topRow = makeElCs("div", "message-top", { children: [content, copyBtn] });
+    const topRow = makeElCs("div", "message-top", { children: [copyBtn, content] });
 
     return makeElCs("div", `message ${sender}`, { children: [topRow, timestampEl] });
 }
