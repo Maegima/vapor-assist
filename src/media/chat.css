@@ -205,8 +205,10 @@ body {
     padding: 4px 8px;
     border-radius: 6px;
     font-family: monospace;
+    font-size: x-small;
     width: -webkit-fill-available;
-    overflow: hidden;
+    max-height: 80px;
+    overflow: auto;
     text-overflow: ellipsis;
     white-space: nowrap;
     display: flex;
@@ -221,6 +223,7 @@ body {
 
 .snippet-bubble pre {
     width: -webkit-fill-available;
+    overflow: auto;
     margin: 3px;
 }
 
