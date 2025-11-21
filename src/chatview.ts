@@ -77,23 +77,49 @@ export class ChatViewProvider implements vscode.WebviewViewProvider {
 
     private loadConfig() {
         try {
+            let configPath: string | undefined;
             const workspaceFolders = vscode.workspace.workspaceFolders;
-            if (!workspaceFolders) return;
+            if (workspaceFolders) {
+                const vaporConfig = path.join(workspaceFolders[0].uri.fsPath, 'vapor-config.yaml');
+                if (fs.existsSync(vaporConfig)) {
+                    configPath = vaporConfig;
+                }
+            }
 
-            this.configPath = path.join(workspaceFolders[0].uri.fsPath, 'chat-config.yaml');
-            if (!fs.existsSync(this.configPath)) return;
+            if (!configPath) {
+                const homeDir = process.env.HOME || process.env.USERPROFILE;
+                if (homeDir) {
+                    const vaporDir = path.join(homeDir, '.vapor');
+                    const vaporConfig = path.join(vaporDir, 'config.yaml');
+                    if (!fs.existsSync(vaporDir)) {
+                        fs.mkdirSync(vaporDir, { recursive: true });
+                    }
+                    if (!fs.existsSync(vaporConfig)) {
+                        const extensionConfig = path.join(this.context.extensionPath, 'config.yaml');
+                        if (fs.existsSync(extensionConfig)) {
+                            fs.copyFileSync(extensionConfig, vaporConfig);
+                            configPath = vaporConfig;
+                        }
+                    }
+                }
+            }
 
-            const fileContents = fs.readFileSync(this.configPath, 'utf8');
-            const config = yaml.load(fileContents) as { endpoint?: string; type?: string; model?: string };
+            if (!configPath) return;
 
+            this.configPath = configPath;
+            const fileContents = fs.readFileSync(configPath, 'utf8');
+            const config = yaml.load(fileContents) as {
+                endpoint?: string;
+                type?: string;
+                model?: string;
+            };
             this.endpoint = config.endpoint;
             this.useOllama = config.type === 'ollama' || config.type === 'ollama-generate';
             this.useOllamaChat = config.type === 'ollama-chat';
             this.ollamaModel = config.model;
-
-            console.log('Loaded config:', config);
+            console.log('Loaded config from:', configPath, config);
         } catch (err) {
-            console.error('Failed to load chat-config.yaml:', err);
+            console.error('Failed to load configuration:', err);
         }
     }
 
