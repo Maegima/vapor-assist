@@ -39,6 +39,13 @@
                 "command": "chatView.addSelectedCode",
                 "title": "Vapor: Add Selected Code as Snippet"
             }
+        ],
+        "keybindings": [
+            {
+                "command": "chatView.addSelectedCode",
+                "key": "ctrl+l",
+                "when": "editorTextFocus"
+            }
         ]
     },
     "scripts": {

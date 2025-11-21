@@ -79,11 +79,19 @@ body {
     background: none;
     border: none;
     cursor: pointer;
-    color: #888;
+    color: #aaa;
     font-size: 0.8em;
     margin-left: 6px;
     opacity: 0;
     transition: opacity 0.2s;
+}
+
+.message.bot .copy-btn:active {
+    color: #007acc;
+}
+
+.message.user .copy-btn:active {
+    color: #333333;
 }
 
 .message:hover .copy-btn {
@@ -102,6 +110,19 @@ body {
 .message:hover div.timestamp {
     opacity: 1;
 }
+
+.message pre {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    background-color: #0d1117;
+}
+
+.message pre .copy-btn {
+    display: flex;
+    padding: 6px;
+}
+
 
 #typing-indicator {
     font-style: italic;
