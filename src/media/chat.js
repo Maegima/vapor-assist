@@ -57,7 +57,7 @@ function createMessageBox(sender, text) {
             btn.onclick = () => {
                 navigator.clipboard.writeText(block.innerText);
             }
-            block.before(btn);
+            block.before(makeElCs("div", "btn-container", { children: [btn] }));
         });
     });
 

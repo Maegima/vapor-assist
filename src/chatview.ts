@@ -100,6 +100,8 @@ export class ChatViewProvider implements vscode.WebviewViewProvider {
                             fs.copyFileSync(extensionConfig, vaporConfig);
                             configPath = vaporConfig;
                         }
+                    } else {
+                        configPath = vaporConfig;
                     }
                 }
             }

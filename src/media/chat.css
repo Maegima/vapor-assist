@@ -114,13 +114,21 @@ body {
 }
 
 .message pre {
+    position: relative;
+    min-height: 28px;
     overflow: auto;
     background-color: #0d1117;
 }
 
+.message .btn-container {
+    position: absolute;
+    top: 2px;
+    right: 0px;
+}
+
 .message pre .copy-btn {
     display: flex;
-    flex-direction: row-reverse;
+    margin: 0px;
     padding: 6px;
 }
 
