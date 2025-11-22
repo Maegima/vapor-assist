@@ -1,9 +1,10 @@
 {
-    "name": "vapor-view",
-    "displayName": "Vapor View",
+    "name": "vapor-assist",
+    "displayName": "Vapor Assist",
     "publisher": "maegima",
-    "description": "A simple VS Code extension that adds a chat window.",
-    "version": "0.0.1",
+    "description": "Vapor Assist adds an AI-powered chat panel to help you write, refactor, and understand code directly inside VS Code.",
+    "icon": "resources/icon.png",
+    "version": "0.0.2",
     "engines": {
         "vscode": "^1.98.0"
     },
@@ -16,8 +17,8 @@
             "activitybar": [
                 {
                     "id": "chatSidebar",
-                    "title": "Chat",
-                    "icon": "resources/chat.svg"
+                    "title": "Vapor Assist",
+                    "icon": "resources/chat.png"
                 }
             ]
         },
@@ -25,24 +26,25 @@
             "chatSidebar": [
                 {
                     "id": "chatView",
-                    "name": "Chat Window",
-                    "type": "webview"
+                    "name": "Assist Panel",
+                    "type": "webview",
+                    "icon": "resources/chat.png"
                 }
             ]
         },
         "commands": [
             {
-                "command": "chatView.openPanel",
-                "title": "Vapor: Open Chat Panel"
+                "command": "vaporAssist.openPanel",
+                "title": "Vapor Assist: Open Chat Panel"
             },
             {
-                "command": "chatView.addSelectedCode",
-                "title": "Vapor: Add Selected Code as Snippet"
+                "command": "vaporAssist.addSelectedCode",
+                "title": "Vapor Assist: Add Selected Code as Snippet"
             }
         ],
         "keybindings": [
             {
-                "command": "chatView.addSelectedCode",
+                "command": "vaporAssist.addSelectedCode",
                 "key": "ctrl+l",
                 "when": "editorTextFocus"
             }

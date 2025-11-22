@@ -8,13 +8,13 @@ export function activate(context: vscode.ExtensionContext) {
     context.subscriptions.push(vscode.window.registerWebviewViewProvider('chatView', viewProvider));
 
     context.subscriptions.push(
-        vscode.commands.registerCommand('chatView.openPanel', () => {
+        vscode.commands.registerCommand('vaporAssist.openPanel', () => {
             ChatPanel.createOrShow(context.extensionUri);
         })
     );
 
     context.subscriptions.push(
-        vscode.commands.registerCommand('chatView.addSelectedCode', async () => {
+        vscode.commands.registerCommand('vaporAssist.addSelectedCode', async () => {
             await vscode.commands.executeCommand('workbench.action.focusActiveEditorGroup');
             const editor = vscode.window.activeTextEditor;
             if (!editor) return vscode.window.showErrorMessage('No active editor.');
