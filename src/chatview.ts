@@ -1,9 +1,8 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
-import * as yaml from 'js-yaml';
 import { HistoryManager } from './historymanager';
-
+import { ConfigManager } from './configmanager';
 
 // ---------------
 // Chat API types
@@ -65,19 +64,13 @@ export interface OllamaGenerateResponse {
 
 export class ChatViewProvider implements vscode.WebviewViewProvider {
     private _view?: vscode.WebviewView;
-    private endpoint: string | undefined;
-    private useOllama: boolean = false;
-    private useOllamaChat: boolean = false;
-    private configPath: string | undefined;
-    private ollamaModel: string | undefined;
-    private watcher: vscode.FileSystemWatcher | undefined;
     private history: HistoryManager;
+    private config: ConfigManager;
 
 
     constructor(private readonly context: vscode.ExtensionContext) {
-        this.loadConfig();
+        this.config = new ConfigManager(context);
         this.history = new HistoryManager();
-        this.watchConfig();
     }
 
     private addToHistory(sender: string, text: string) {
@@ -101,69 +94,6 @@ export class ChatViewProvider implements vscode.WebviewViewProvider {
         this._view.webview.postMessage({ type: 'restore-history', history: this.history.getHistory() });
     }
 
-    private loadConfig() {
-        try {
-            let configPath: string | undefined;
-            const workspaceFolders = vscode.workspace.workspaceFolders;
-            if (workspaceFolders) {
-                const vaporConfig = path.join(workspaceFolders[0].uri.fsPath, 'vapor-config.yaml');
-                if (fs.existsSync(vaporConfig)) {
-                    configPath = vaporConfig;
-                }
-            }
-
-            if (!configPath) {
-                const homeDir = process.env.HOME || process.env.USERPROFILE;
-                if (homeDir) {
-                    const vaporDir = path.join(homeDir, '.vapor');
-                    const vaporConfig = path.join(vaporDir, 'config.yaml');
-                    if (!fs.existsSync(vaporDir)) {
-                        fs.mkdirSync(vaporDir, { recursive: true });
-                    }
-                    if (!fs.existsSync(vaporConfig)) {
-                        const extensionConfig = path.join(this.context.extensionPath, 'config.yaml');
-                        if (fs.existsSync(extensionConfig)) {
-                            fs.copyFileSync(extensionConfig, vaporConfig);
-                            configPath = vaporConfig;
-                        }
-                    } else {
-                        configPath = vaporConfig;
-                    }
-                }
-            }
-
-            if (!configPath) return;
-
-            this.configPath = configPath;
-            const fileContents = fs.readFileSync(configPath, 'utf8');
-            const config = yaml.load(fileContents) as {
-                endpoint?: string;
-                type?: string;
-                model?: string;
-            };
-            this.endpoint = config.endpoint;
-            this.useOllama = config.type === 'ollama' || config.type === 'ollama-generate';
-            this.useOllamaChat = config.type === 'ollama-chat';
-            this.ollamaModel = config.model;
-            console.log('Loaded config from:', configPath, config);
-        } catch (err) {
-            console.error('Failed to load configuration:', err);
-        }
-    }
-
-    private watchConfig() {
-        if (!this.configPath) return;
-
-        this.watcher = vscode.workspace.createFileSystemWatcher(this.configPath);
-        this.watcher.onDidChange(() => this.loadConfig());
-        this.watcher.onDidCreate(() => this.loadConfig());
-        this.watcher.onDidDelete(() => {
-            this.endpoint = undefined;
-            this.useOllama = false;
-            console.warn('chat-config.yaml deleted, endpoint cleared.');
-        });
-    }
-
     resolveWebviewView(webviewView: vscode.WebviewView) {
         this._view = webviewView;
 
@@ -175,14 +105,14 @@ export class ChatViewProvider implements vscode.WebviewViewProvider {
                 const userMessage = message.text;
                 this.addToHistory('user', userMessage);
                 let botReply = 'No endpoint configured.';
-                if (this.endpoint) {
+                if (this.config.endpoint) {
                     try {
-                        if (this.useOllamaChat) {
+                        if (this.config.useOllamaChat) {
                             botReply = await this.sendToOllamaChat(userMessage);
-                        } else if (this.useOllama) {
+                        } else if (this.config.useOllama) {
                             botReply = await this.sendToOllamaGenerate(userMessage);
                         } else {
-                            const response = await fetch(this.endpoint, {
+                            const response = await fetch(this.config.endpoint, {
                                 method: 'POST',
                                 headers: { 'Content-Type': 'application/json' },
                                 body: JSON.stringify({ message: userMessage })
@@ -203,15 +133,15 @@ export class ChatViewProvider implements vscode.WebviewViewProvider {
     }
 
     private async sendToOllamaGenerate(message: string): Promise<string> {
-        if (!this.endpoint) return "No endpoint configured.";
+        if (!this.config.endpoint) return "No endpoint configured.";
 
         const payload: OllamaGenerateRequest = {
-            model: this.ollamaModel ?? "example-model",
+            model: this.config.model ?? "example-model",
             prompt: message,
             stream: false
         };
 
-        const response = await fetch(this.endpoint, {
+        const response = await fetch(this.config.endpoint, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
@@ -223,17 +153,17 @@ export class ChatViewProvider implements vscode.WebviewViewProvider {
     }
 
     private async sendToOllamaChat(message: string): Promise<string> {
-        if (!this.endpoint) return "No endpoint configured.";
+        if (!this.config.endpoint) return "No endpoint configured.";
 
         const payload: OllamaChatRequest = {
-            model: this.ollamaModel ?? "example-chat-model",
+            model: this.config.model ?? "example-chat-model",
             messages: [
                 { role: "user", content: message }
             ],
             stream: false
         };
 
-        const response = await fetch(this.endpoint, {
+        const response = await fetch(this.config.endpoint, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
