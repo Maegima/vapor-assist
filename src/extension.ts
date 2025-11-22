@@ -21,6 +21,14 @@ export function activate(context: vscode.ExtensionContext) {
             viewProvider.addCodeSnipet(editor);
         })
     );
+
+    context.subscriptions.push(
+        vscode.commands.registerCommand('vaporAssist.clearHistory', () => {
+            viewProvider.clearHistory();
+            vscode.window.showInformationMessage('Vapor chat history cleared.');
+            viewProvider.restoreHistoryToWebview();
+        })
+    );
 }
 
 export function deactivate() {}

@@ -124,7 +124,7 @@ function addCodeSnippet(text) {
 
 window.addEventListener('message', (event) => {
     const msg = event.data;
-    if (msg.type === 'reply' && msg.sender === 'bot') {
+    if (msg.type === 'reply') {
         appendMessage(msg.sender, msg.text);
         generating = false;
         inputWrapper.classList.remove('loading');
@@ -136,9 +136,22 @@ window.addEventListener('message', (event) => {
     if (msg.type === 'insert-snippet') {
         if (msg.code) addCodeSnippet(msg.code);
     }
+
+    if (msg.type === 'restore-history') {
+        while (messagesBox.firstChild) {
+            messagesBox.removeChild(messagesBox.lastChild);
+          }
+        msg.history.forEach(entry => {
+            appendMessage(entry.sender, entry.text);
+        });
+    }
 });
 
 sendBtn.onclick = sendMessage;
 inputWrapper.addEventListener('keydown', (e) => {
     if (e.key === 'Enter' && e.ctrlKey) sendMessage();
+});
+
+window.addEventListener('DOMContentLoaded', () => {
+    vscode.postMessage({ type: 'ready' });
 });

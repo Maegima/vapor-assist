@@ -2,6 +2,8 @@ import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as yaml from 'js-yaml';
+import { HistoryManager } from './historymanager';
+
 
 // ---------------
 // Chat API types
@@ -69,10 +71,34 @@ export class ChatViewProvider implements vscode.WebviewViewProvider {
     private configPath: string | undefined;
     private ollamaModel: string | undefined;
     private watcher: vscode.FileSystemWatcher | undefined;
+    private history: HistoryManager;
+
 
     constructor(private readonly context: vscode.ExtensionContext) {
         this.loadConfig();
+        this.history = new HistoryManager();
         this.watchConfig();
+    }
+
+    private addToHistory(sender: string, text: string) {
+        try {
+            this.history.add({ sender, text });
+        } catch (err) {
+            console.error("Failed to write session history:", err);
+        }
+    }
+
+    public clearHistory() {
+        try {
+            this.history.clear();
+        } catch (err) {
+            console.error("Failed to clear session history:", err);
+        }
+    }
+
+    public restoreHistoryToWebview() {
+        if (!this._view) return;
+        this._view.webview.postMessage({ type: 'restore-history', history: this.history.getHistory() });
     }
 
     private loadConfig() {
@@ -147,8 +173,8 @@ export class ChatViewProvider implements vscode.WebviewViewProvider {
         webviewView.webview.onDidReceiveMessage(async (message) => {
             if (message.type === 'send') {
                 const userMessage = message.text;
+                this.addToHistory('user', userMessage);
                 let botReply = 'No endpoint configured.';
-
                 if (this.endpoint) {
                     try {
                         if (this.useOllamaChat) {
@@ -168,10 +194,10 @@ export class ChatViewProvider implements vscode.WebviewViewProvider {
                         botReply = 'Error contacting endpoint: ' + err;
                     }
                 }
-
-                // Display messages
-                webviewView.webview.postMessage({ type: 'reply', sender: 'user', text: userMessage });
+                this.addToHistory('bot', botReply);
                 webviewView.webview.postMessage({ type: 'reply', sender: 'bot', text: botReply });
+            } else if (message.type === 'ready') {
+                this.restoreHistoryToWebview();
             }
         });
     }

@@ -40,6 +40,10 @@
             {
                 "command": "vaporAssist.addSelectedCode",
                 "title": "Vapor Assist: Add Selected Code as Snippet"
+            },
+            {
+                "command": "vaporAssist.clearHistory",
+                "title": "Vapor: Clear Chat History"
             }
         ],
         "keybindings": [
