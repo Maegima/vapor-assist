@@ -52,8 +52,8 @@
                 "icon": "$(add)"
             },
             {
-                "command": "vaporAssist.pickSession",
-                "title": "Vapor Assist: Pick Sessions",
+                "command": "vaporAssist.showSessions",
+                "title": "Vapor Assist: Show Sessions",
                 "icon": "$(history)"
             }
         ],
@@ -70,7 +70,7 @@
                     "group": "navigation@2"
                 },
                 {
-                    "command": "vaporAssist.clearHistory",
+                    "command": "vaporAssist.showSessions",
                     "when": "view == chatView",
                     "group": "navigation@3"
                 }

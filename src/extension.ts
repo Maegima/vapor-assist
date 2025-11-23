@@ -36,6 +36,9 @@ export function activate(context: vscode.ExtensionContext) {
     context.subscriptions.push(
         vscode.commands.registerCommand('vaporAssist.pickSession', () => viewProvider.showSessionPicker())
     );
+    context.subscriptions.push(
+        vscode.commands.registerCommand('vaporAssist.showSessions', () => viewProvider.showSessionsInWebview())
+    );
 }
 
 export function deactivate() {}

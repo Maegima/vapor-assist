@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="${cssUri}">
     <link rel="stylesheet" href="${hljsCssUri}">
 </head>
+
 <body>
     <div id="typing-indicator" style="display:none;">Bot is typing</div>
     <div id="input-wrapper">
@@ -19,6 +20,17 @@
     </div>
     <button id="send">Send</button>
     <div id="messages"></div>
+
+    <div id="session-panel" class="hidden">
+        <div class="session-panel-header">
+            <span>Chat Sessions</span>
+            <button id="close-session-panel">✕</button>
+        </div>
+        <button id="new-session-btn" class="new-session-button">
+            + New Session
+        </button>
+        <div id="sessions-list"></div>
+    </div>
 
     <script nonce="${nonce}" src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script nonce="${nonce}" src="${hljsJsUri}"></script>

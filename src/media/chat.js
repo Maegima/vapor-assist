@@ -145,6 +145,15 @@ window.addEventListener('message', (event) => {
             appendMessage(entry.sender, entry.text);
         });
     }
+
+    if (msg.type === 'show-sessions') {
+        openSessionsPanel(msg.sessions, msg.currentSessionId);
+    }
+
+    if (msg.type === 'session-changed') {
+        sessionPanel.classList.remove('visible');
+        setTimeout(() => sessionPanel.classList.add('hidden'), 180);
+    }
 });
 
 sendBtn.onclick = sendMessage;
@@ -154,4 +163,34 @@ inputWrapper.addEventListener('keydown', (e) => {
 
 window.addEventListener('DOMContentLoaded', () => {
     vscode.postMessage({ type: 'ready' });
+});
+
+const sessionPanel = document.getElementById('session-panel');
+const sessionsList = document.getElementById('sessions-list');
+const newSessionBtn = document.getElementById('new-session-btn');
+const closeSessionPanel = document.getElementById('close-session-panel');
+
+function openSessionsPanel(sessions, currentSessionId) {
+    sessionsList.innerHTML = '';
+    Object.entries(sessions).forEach(([key, val]) => {
+        const div = document.createElement('div');
+        div.className = 'session-item' + (key === currentSessionId ? ' active' : '');
+        div.textContent = val.title || ('Session ' + key.slice(0, 6));
+
+        div.addEventListener('click', () => {
+            vscode.postMessage({ type: 'switch-session', id: key });
+        });
+        sessionsList.appendChild(div);
+    });
+    sessionPanel.classList.add('visible');
+    sessionPanel.classList.remove('hidden');
+}
+
+closeSessionPanel.addEventListener('click', () => {
+    sessionPanel.classList.remove('visible');
+    setTimeout(() => sessionPanel.classList.add('hidden'), 180);
+});
+
+newSessionBtn.addEventListener('click', () => {
+    vscode.postMessage({ type: 'new-session' });
 });

@@ -83,6 +83,15 @@ export class ChatViewProvider implements vscode.WebviewViewProvider {
         }
     }
 
+    public showSessionsInWebview() {
+        if (!this._view) return;
+        this._view.webview.postMessage({
+            type: 'show-sessions',
+            sessions: this.history.listSessions(),
+            currentSessionId: this.history.getCurrentSessionId()
+        });
+    }
+
     resolveWebviewView(webviewView: vscode.WebviewView) {
         this._view = webviewView;
 
@@ -105,6 +114,14 @@ export class ChatViewProvider implements vscode.WebviewViewProvider {
                 webviewView.webview.postMessage({ type: 'reply', sender: 'bot', text: botReply });
             } else if (message.type === 'ready') {
                 this.restoreHistoryToWebview();
+            } else if (message.type === 'switch-session') {
+                this.switchSession(message.id);
+                this.restoreHistoryToWebview();
+                this._view?.webview.postMessage({ type: 'session-changed' });
+            } else if (message.type === 'new-session') {
+                this.history.createSession('Session ' + new Date().toLocaleString());
+                this.restoreHistoryToWebview();
+                this.showSessionsInWebview();
             }
         });
     }
