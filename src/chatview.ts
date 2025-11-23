@@ -33,6 +33,36 @@ export class ChatViewProvider implements vscode.WebviewViewProvider {
         }
     }
 
+    public newSession() {
+        this.history.createSession('Chat ' + new Date().toLocaleString());
+        this.restoreHistoryToWebview();
+    }
+
+    public switchSession(id: string) {
+        try {
+            this.history.switchSession(id);
+            this.restoreHistoryToWebview();
+        } catch (err) {
+            vscode.window.showErrorMessage('Failed to switch session: ' + err);
+        }
+    }
+
+    public async showSessionPicker() {
+        const sessions = this.history.listSessions();
+        const items: vscode.QuickPickItem[] = Object.entries(sessions).map(([key, val]) => ({
+            label: val.title ?? key.slice(0, 8),
+            description: new Date(val.updatedAt).toLocaleString(),
+            detail: key
+        }));
+        const pick = await vscode.window.showQuickPick(items, {
+            title: 'Select Chat Session',
+            placeHolder: 'Choose a chat session'
+        });
+        if (pick) {
+            this.switchSession(pick.detail!);
+        }
+    }
+
     public restoreHistoryToWebview() {
         if (!this._view) return;
         this._view.webview.postMessage({ type: 'restore-history', history: this.history.getHistory() });

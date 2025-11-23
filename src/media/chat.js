@@ -53,7 +53,7 @@ function createMessageBox(sender, text) {
     setTimeout(() => {
         content.querySelectorAll("pre code").forEach(block => {
             hljs.highlightElement(block);
-            const btn = makeElCs('button', 'copy-btn', {html: copyIcon()});
+            const btn = makeElCs('button', 'copy-btn', { html: copyIcon() });
             btn.onclick = () => {
                 navigator.clipboard.writeText(block.innerText);
             }
@@ -140,7 +140,7 @@ window.addEventListener('message', (event) => {
     if (msg.type === 'restore-history') {
         while (messagesBox.firstChild) {
             messagesBox.removeChild(messagesBox.lastChild);
-          }
+        }
         msg.history.forEach(entry => {
             appendMessage(entry.sender, entry.text);
         });

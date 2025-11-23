@@ -29,6 +29,13 @@ export function activate(context: vscode.ExtensionContext) {
             viewProvider.restoreHistoryToWebview();
         })
     );
+
+    context.subscriptions.push(
+        vscode.commands.registerCommand('vaporAssist.newSession', () => viewProvider.newSession())
+    );
+    context.subscriptions.push(
+        vscode.commands.registerCommand('vaporAssist.pickSession', () => viewProvider.showSessionPicker())
+    );
 }
 
 export function deactivate() {}

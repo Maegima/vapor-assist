@@ -43,9 +43,39 @@
             },
             {
                 "command": "vaporAssist.clearHistory",
-                "title": "Vapor: Clear Chat History"
+                "title": "Vapor Assist: Clear Chat History",
+                "icon": "$(trash)"
+            },
+            {
+                "command": "vaporAssist.newSession",
+                "title": "Vapor Assist: New Session",
+                "icon": "$(add)"
+            },
+            {
+                "command": "vaporAssist.pickSession",
+                "title": "Vapor Assist: Pick Sessions",
+                "icon": "$(history)"
             }
         ],
+        "menus": {
+            "view/title": [
+                {
+                    "command": "vaporAssist.newSession",
+                    "when": "view == chatView",
+                    "group": "navigation@1"
+                },
+                {
+                    "command": "vaporAssist.pickSession",
+                    "when": "view == chatView",
+                    "group": "navigation@2"
+                },
+                {
+                    "command": "vaporAssist.clearHistory",
+                    "when": "view == chatView",
+                    "group": "navigation@3"
+                }
+            ]
+        },
         "keybindings": [
             {
                 "command": "vaporAssist.addSelectedCode",
