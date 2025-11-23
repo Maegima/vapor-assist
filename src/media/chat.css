@@ -5,21 +5,21 @@ body {
     display: flex;
     flex-direction: column;
     height: 100vh;
-    background-color: #1e1e1e;
-    color: #d4d4d4;
+    background-color: var(--vscode-sideBar-background);
+    color: var(--vscode-editorWidget-foreground);
     margin: 0;
 }
 
 .user {
-    background: linear-gradient(135deg, #0e639c, #007acc);
-    color: #fff;
+    background: linear-gradient(135deg, var(--vscode-list-focusOutline), var(--vscode-inputValidation-infoBorder));
+    color: var(--vscode-button-secondaryForeground);
     align-self: flex-start;
     text-align: left;
 }
 
 .bot {
-    background: linear-gradient(135deg, #2e2e2e, #333333);
-    color: #d4d4d4;
+    background: linear-gradient(135deg, var(--vscode-textBlockQuote-background), var(--vscode-debugToolBar-background));
+    color: var(--vscode-editorWidget-foreground);
     align-self: flex-start;
     text-align: left;
 }
@@ -39,7 +39,7 @@ body {
     left: 0;
     height: 20px;
     width: 100%;
-    background: linear-gradient(to bottom, #1e1e1e, transparent);
+    background: linear-gradient(to bottom, var(--vscode-sideBar-background), transparent);
     pointer-events: none;
 }
 
@@ -49,12 +49,12 @@ body {
 }
 
 #messages::-webkit-scrollbar-thumb {
-    background-color: #555;
+    background-color: var(--vscode-editorWidget-border);
     border-radius: 4px;
 }
 
 #messages::-webkit-scrollbar-track {
-    background-color: #252526;
+    background-color: var(--vscode-inlineChat-background);
 }
 
 .message {
@@ -80,7 +80,7 @@ body {
     background: none;
     border: none;
     cursor: pointer;
-    color: #aaa;
+    color: var(--vscode-inlineChat-foreground);
     font-size: 0.8em;
     margin-left: 6px;
     opacity: 0;
@@ -90,11 +90,11 @@ body {
 }
 
 .message.bot .copy-btn:active {
-    color: #007acc;
+    color: var(--vscode-inputValidation-infoBorder);
 }
 
 .message.user .copy-btn:active {
-    color: #333333;
+    color: var(--vscode-debugToolBar-background);
 }
 
 .message:hover .copy-btn {
@@ -104,7 +104,7 @@ body {
 
 .message div.timestamp {
     font-size: 0.65em;
-    color: #aaa;
+    color: var(--vscode-inlineChat-foreground);
     margin-top: 4px;
     opacity: 0;
     transition: opacity 0.2s;
@@ -118,7 +118,10 @@ body {
     position: relative;
     min-height: 28px;
     overflow: auto;
-    background-color: #0d1117;
+}
+
+.message pre code {
+    background-color: var(--vscode-editor-background);
 }
 
 .message .btn-container {
@@ -136,7 +139,7 @@ body {
 
 #typing-indicator {
     font-style: italic;
-    color: #aaa;
+    color: var(--vscode-inlineChat-foreground);
     margin-bottom: 6px;
 }
 
@@ -160,9 +163,9 @@ body {
     width: 100%;
     padding: 6px;
     margin-bottom: 10px;
-    background-color: #2e2e2e;
-    color: #d4d4d4;
-    border: 1px solid #555;
+    background-color: var(--vscode-input-background);
+    color: var(--vscode-input-foreground);
+    border: 1px solid var(--vscode-input-border);
     border-radius: 6px;
     display: block;
     flex-wrap: wrap;
@@ -177,14 +180,14 @@ body {
 
 #input-wrapper:focus-within {
     outline: none;
-    border-color: #007acc;
-    box-shadow: 0 0 8px #007acc;
+    border-color: var(--vscode-inputValidation-infoBorder);
+    box-shadow: 0 0 8px var(--vscode-inputValidation-infoBorder);
 }
 
 #input-wrapper.loading {
     animation: pulseGlow 1s infinite;
-    border-color: #007acc;
-    background-color: #2a2a2a;
+    border-color: var(--vscode-inputValidation-infoBorder);
+    background-color: var(--vscode-textBlockQuote-background);
 }
 
 #custom-input {
@@ -196,14 +199,14 @@ body {
     outline: none;
     resize: none;
     background: transparent;
-    color: #d4d4d4;
+    color: var(--vscode-editorWidget-foreground);
 }
 
 #send {
     margin-bottom: 10px;
     width: 100%;
-    background-color: #007acc;
-    color: #fff;
+    background-color: var(--vscode-button-background);
+    color: var(--vscode-button-foreground);
     border: none;
     padding: 8px;
     border-radius: 6px;
@@ -212,13 +215,13 @@ body {
 }
 
 #send:hover {
-    background-color: #005f99;
+    background-color: var(--vscode-button-hoverBackground);
 }
 
 #send.loading {
     animation: pulseGlow 1s infinite;
-    background-color: #007acc;
-    color: #fff;
+    background-color: var(--vscode-inputValidation-infoBorder);
+    color: var(--vscode-button-secondaryForeground);
     border: none;
 }
 
@@ -231,8 +234,8 @@ body {
 }
 
 .snippet-bubble {
-    background-color: #3a3a3a;
-    color: #e5e5e5;
+    background-color: var(--vscode-debugToolBar-background);
+    color: var(--vscode-inlineChat-foreground);
     padding: 4px 8px;
     border-radius: 6px;
     font-family: monospace;
@@ -261,25 +264,25 @@ body {
 .snippet-delete {
     margin-left: 6px;
     cursor: pointer;
-    color: #bbb;
+    color: var(--vscode-keybindingLabel-foreground);
     font-weight: bold;
 }
 
 .snippet-delete:hover {
-    color: #fff;
+    color: var(--vscode-button-secondaryForeground);
 }
 
 @keyframes pulseGlow {
     0% {
-        box-shadow: 0 0 5px 2px #007acc;
+        box-shadow: 0 0 5px 2px var(--vscode-inputValidation-infoBorder);
     }
 
     50% {
-        box-shadow: 0 0 15px 5px #007acc;
+        box-shadow: 0 0 15px 5px var(--vscode-inputValidation-infoBorder);
     }
 
     100% {
-        box-shadow: 0 0 5px 2px #007acc;
+        box-shadow: 0 0 5px 2px var(--vscode-inputValidation-infoBorder);
     }
 }
 
