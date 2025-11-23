@@ -138,6 +138,25 @@ export class HistoryManager {
         this.saveIndex();
     }
 
+    public renameSession(id: string, title: string) {
+        this.wsSessions.sessions[id].title = title;
+        this.wsSessions.sessions[id].updatedAt = Date.now();
+        this.saveIndex();
+    }
+
+    public deleteSession(id: string) {
+        delete this.wsSessions.sessions[id];
+        this.saveIndex();
+        if (fs.existsSync(this.currentSessionFile))
+            fs.unlinkSync(this.currentSessionFile);
+        if (Object.keys(this.wsSessions.sessions).length === 0) {
+            this.createSession('New Session');
+        }
+        this.wsSessions.current = Object.keys(this.wsSessions.sessions)[0];
+        this.saveIndex();
+        this.currentSessionFile = this.sessionPath(this.wsSessions.current);
+    }
+
     public clear() {
         fs.writeFileSync(this.currentSessionFile, JSON.stringify([], null, 2), 'utf8');
     }

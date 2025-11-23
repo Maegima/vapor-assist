@@ -122,6 +122,15 @@ export class ChatViewProvider implements vscode.WebviewViewProvider {
                 this.history.createSession('Session ' + new Date().toLocaleString());
                 this.restoreHistoryToWebview();
                 this.showSessionsInWebview();
+            } else if (message.type === 'request-session-list') {
+                this.showSessionsInWebview();
+            } else if (message.type === 'rename-session') {
+                this.history.renameSession(message.id, message.title);
+                this.showSessionsInWebview();
+            } else if (message.type === 'delete-session') {
+                this.history.deleteSession(message.id);
+                this.restoreHistoryToWebview();
+                this.showSessionsInWebview();
             }
         });
     }
