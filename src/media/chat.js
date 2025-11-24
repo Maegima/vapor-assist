@@ -235,6 +235,7 @@ document.getElementById('session-search').addEventListener('input', (e) => {
 });
 
 window.addEventListener('DOMContentLoaded', () => {
+    lucide.createIcons();
     const state = vscode.getState() || {};
     sessionSearchValue = state.sessionSearchValue || '';
     if (state.sessionsOpen) {

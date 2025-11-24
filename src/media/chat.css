@@ -313,7 +313,27 @@ body {
     display: flex;
     justify-content: space-between;
     font-weight: bold;
+    align-items: center;
     margin-bottom: 10px;
+}
+
+#close-session-panel {
+    background: none;
+    border: none;
+    cursor: pointer;
+    margin: 0;
+    opacity: 0.6;
+}
+
+#close-session-panel:hover {
+    opacity: 1;
+}
+
+#close-session-panel svg {
+    position: relative;
+    top: 2px;
+    height: 16px;
+    color: var(--vscode-foreground);
 }
 
 #session-search {
