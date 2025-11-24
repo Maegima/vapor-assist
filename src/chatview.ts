@@ -13,7 +13,7 @@ export class ChatViewProvider implements vscode.WebviewViewProvider {
 
     constructor(private readonly context: vscode.ExtensionContext) {
         this.config = new ConfigManager(context);
-        this.history = new HistoryManager();
+        this.history = new HistoryManager(this.config);
         this.ollama = new OllamaClient(this.config);
     }
 

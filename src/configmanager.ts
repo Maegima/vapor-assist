@@ -7,6 +7,11 @@ export interface VaporConfig {
     endpoint?: string;
     type?: string;
     model?: string;
+    workspace?: {
+        sessions?: number;
+        entries?: number;
+        retention?: string;
+    };
 }
 
 export class ConfigManager {
@@ -14,6 +19,9 @@ export class ConfigManager {
     public useOllama: boolean = false;
     public useOllamaChat: boolean = false;
     public model?: string;
+    public sessions: number = 20;
+    public entries: number = 300;
+    public retention: number = 30 * 24 * 60 * 60 * 1000;
 
     private configPath?: string;
     private watcher?: vscode.FileSystemWatcher;
@@ -60,6 +68,11 @@ export class ConfigManager {
             this.model = config.model;
             this.useOllama = config.type === 'ollama' || config.type === 'ollama-generate';
             this.useOllamaChat = config.type === 'ollama-chat';
+            if (config.workspace) {
+                this.sessions = config.workspace.sessions ?? this.sessions;
+                this.entries = config.workspace.entries ?? this.entries;
+                this.retention = this.parseDuration(config.workspace.retention, this.retention);
+            }
             console.log('Vapor config loaded:', this.configPath, config);
         } catch (err) {
             console.error('Failed to load Vapor config:', err);
@@ -79,5 +92,27 @@ export class ConfigManager {
             this.model = undefined;
             console.warn('Vapor config deleted, settings reset.');
         });
+    }
+
+    private parseDuration(value: string | undefined, fallbackMs: number): number {
+        if (!value) return fallbackMs;
+        const v = value.trim().toLowerCase();
+        const match = /^(\d+)\s*(h|d|w|m|y)$/i.exec(v);
+        if (!match) return fallbackMs;
+        const amount = Number(match[1]);
+        const unit = match[2];
+        const H = 1000 * 60 * 60;
+        const D = H * 24;
+        const W = D * 7;
+        const M = D * 30;
+        const Y = D * 365;
+        switch (unit) {
+            case 'h': return amount * H;
+            case 'd': return amount * D;
+            case 'w': return amount * W;
+            case 'm': return amount * M;
+            case 'y': return amount * Y;
+            default: return fallbackMs;
+        }
     }
 }

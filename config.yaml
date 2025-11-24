@@ -1,3 +1,8 @@
 type: ollama-chat
 endpoint: http://localhost:11434/api/chat
 model: llama3
+
+workspace:
+  sessions: 20     # keep last 20 sessions
+  entries: 50      # keep last 50 messages per session
+  retention: "30d" # delete sessions older than 30 days, accepts h = hours, d = days, w = weeks, m = months, y = years

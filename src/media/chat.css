@@ -121,6 +121,7 @@ body {
     position: relative;
     min-height: 28px;
     overflow: auto;
+    background-color: var(--vscode-editor-background);
 }
 
 .message pre code {

@@ -1,6 +1,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import * as vscode from 'vscode';
+import { ConfigManager } from './configmanager';
 
 export interface ChatEntry {
     sender: string;
@@ -39,7 +40,14 @@ export class HistoryManager {
     private wsSessions!: WorkspaceSessions;
     private currentSessionFile!: string;
 
-    constructor() {
+    private maxSessions;
+    private maxEntries;
+    private maxRetention;
+
+    constructor(config: ConfigManager) {
+        this.maxSessions = config.sessions;
+        this.maxEntries = config.entries;
+        this.maxRetention = config.retention;
         const home = process.env.HOME || process.env.USERPROFILE;
         this.sessionsDir = path.join(home!, '.vapor', 'sessions');
         const workspaceFolders = vscode.workspace.workspaceFolders;
@@ -49,12 +57,13 @@ export class HistoryManager {
             fs.mkdirSync(this.sessionsDir, { recursive: true });
 
         this.sessionsIndexFile = path.join(this.sessionsDir, 'sessions.json');
-        if (!fs.existsSync(this.sessionsIndexFile)) {
+        if (!fs.existsSync(this.sessionsIndexFile))
             fs.writeFileSync(this.sessionsIndexFile, JSON.stringify({}), 'utf8');
-        }
 
         this.loadIndex();
         this.loadOrCreateSession();
+        this.pruneOldSessions();
+        this.enforceSessionLimit();
     }
 
     private loadIndex() {
@@ -84,16 +93,13 @@ export class HistoryManager {
         this.wsSessions = this.sessionsIndex[this.workspaceId];
         if (!this.wsSessions) {
             const session = this.createSessionInternal('New Chat Session');
-            const sessions: SessionDict = {};
-            sessions[session.id] = session;
-            this.wsSessions = { current: session.id, sessions };
+            this.wsSessions = { current: session.id, sessions: { [session.id]: session } };
             this.sessionsIndex[this.workspaceId] = this.wsSessions;
             this.saveIndex();
         }
         this.currentSessionFile = this.sessionPath(this.wsSessions.current);
-        if (!fs.existsSync(this.currentSessionFile)) {
+        if (!fs.existsSync(this.currentSessionFile))
             fs.writeFileSync(this.currentSessionFile, JSON.stringify([], null, 2), 'utf8');
-        }
     }
 
     public createSession(title = 'New Session'): SessionData {
@@ -130,8 +136,10 @@ export class HistoryManager {
     }
 
     public add(entry: ChatEntry) {
-        const history = this.getHistory();
+        let history = this.getHistory();
         history.push(entry);
+        if (history.length > this.maxEntries)
+            history = history.slice(history.length - this.maxEntries);
         fs.writeFileSync(this.currentSessionFile, JSON.stringify(history, null, 2), 'utf8');
         const session = this.wsSessions.sessions[this.wsSessions.current];
         if (session) session.updatedAt = Date.now();
@@ -146,12 +154,10 @@ export class HistoryManager {
 
     public deleteSession(id: string) {
         delete this.wsSessions.sessions[id];
-        this.saveIndex();
         if (fs.existsSync(this.currentSessionFile))
             fs.unlinkSync(this.currentSessionFile);
-        if (Object.keys(this.wsSessions.sessions).length === 0) {
+        if (Object.keys(this.wsSessions.sessions).length === 0)
             this.createSession('New Session');
-        }
         this.wsSessions.current = Object.keys(this.wsSessions.sessions)[0];
         this.saveIndex();
         this.currentSessionFile = this.sessionPath(this.wsSessions.current);
@@ -159,5 +165,28 @@ export class HistoryManager {
 
     public clear() {
         fs.writeFileSync(this.currentSessionFile, JSON.stringify([], null, 2), 'utf8');
+    }
+
+    private pruneOldSessions() {
+        const now = Date.now();
+        const sessions = this.wsSessions.sessions;
+        for (const id of Object.keys(sessions)) {
+            if (now - sessions[id].updatedAt > this.maxRetention) {
+                this.deleteSession(id);
+            }
+        }
+        this.saveIndex();
+    }
+
+    private enforceSessionLimit() {
+        const sessions = this.wsSessions.sessions;
+        if (Object.keys(sessions).length <= this.maxSessions) return;
+        const sorted = Object.values(sessions)
+            .sort((a, b) => b.updatedAt - a.updatedAt)
+            .slice(this.maxSessions); // sessions to delete
+        for (const s of sorted) {
+            this.deleteSession(s.id);
+        }
+        this.saveIndex();
     }
 }
