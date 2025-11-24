@@ -136,18 +136,20 @@ export class ChatViewProvider implements vscode.WebviewViewProvider {
     }
 
     private getHtml(webview: vscode.Webview) {
-        const mediaPath = path.join(this.context.extensionPath, 'dist/media');
+        const mediaPath = path.join(this.context.extensionPath, 'media');
 
         const htmlPath = vscode.Uri.file(path.join(mediaPath, 'chat.html'));
         const cssPath = vscode.Uri.file(path.join(mediaPath, 'chat.css'));
         const jsPath = vscode.Uri.file(path.join(mediaPath, 'chat.js'));
         const hljsCssPath = vscode.Uri.file(path.join(mediaPath, 'highlight.min.css'));
         const hljsJsPath = vscode.Uri.file(path.join(mediaPath, 'highlight.min.js'));
+        const iconPath = vscode.Uri.file(path.join(mediaPath, 'lucide.min.js'));
 
         const cssUri = webview.asWebviewUri(cssPath);
         const jsUri = webview.asWebviewUri(jsPath);
         const hljsCssUri = webview.asWebviewUri(hljsCssPath);
         const hljsJsUri = webview.asWebviewUri(hljsJsPath);
+        const iconUri = webview.asWebviewUri(iconPath);
 
         const nonce = getNonce();
         let html = fs.readFileSync(htmlPath.fsPath, 'utf8');
@@ -158,6 +160,7 @@ export class ChatViewProvider implements vscode.WebviewViewProvider {
             .replace(/\$\{jsUri\}/g, jsUri.toString())
             .replace(/\$\{hljsCssUri\}/g, hljsCssUri.toString())
             .replace(/\$\{hljsJsUri\}/g, hljsJsUri.toString())
+            .replace(/\$\{iconUri\}/g, iconUri.toString())
             .replace(/\$\{webviewCspSource\}/g, webview.cspSource);
     }
 

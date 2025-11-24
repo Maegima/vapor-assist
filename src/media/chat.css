@@ -81,12 +81,15 @@ body {
     border: none;
     cursor: pointer;
     color: var(--vscode-inlineChat-foreground);
-    font-size: 0.8em;
-    margin-left: 6px;
+    padding: 0px;
     opacity: 0;
     width: -webkit-fill-available;
     text-align: end;
     transition: opacity 0.2s;
+}
+
+.message .copy-btn svg {
+    width: 14px;
 }
 
 .message.bot .copy-btn:active {
@@ -133,7 +136,7 @@ body {
 .message pre .copy-btn {
     display: flex;
     margin: 0px;
-    padding: 6px;
+    padding: 1px 6px;
 }
 
 
@@ -330,13 +333,11 @@ body {
 }
 
 .session-item {
-    padding: 8px;
     border-radius: 4px;
     margin-bottom: 6px;
     cursor: pointer;
     background: var(--vscode-editorWidget-background);
     border: 1px solid var(--vscode-editorWidget-border);
-    display: flex;
     justify-content: space-between;
     align-items: center;
 }
@@ -348,23 +349,6 @@ body {
 .session-item.active {
     background: var(--vscode-list-activeSelectionBackground);
     color: var(--vscode-list-activeSelectionForeground);
-}
-
-.session-actions {
-    display: flex;
-    gap: 6px;
-}
-
-.session-action-btn {
-    cursor: pointer;
-    border: none;
-    background: transparent;
-    color: var(--vscode-button-foreground);
-    opacity: 0.7;
-}
-
-.session-action-btn:hover {
-    opacity: 1;
 }
 
 .new-session-button {
@@ -390,7 +374,6 @@ body {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 6px;
 }
 
 .session-title {
@@ -402,6 +385,7 @@ body {
 .session-title-input {
     flex: 1;
     padding: 4px;
+    margin: 0px 4px;
     font-size: 13px;
     border-radius: 4px;
     border: 1px solid var(--vscode-input-border);
@@ -411,7 +395,7 @@ body {
 
 .session-controls {
     display: flex;
-    gap: 6px;
+    padding-right: 4px;
 }
 
 .session-btn {
@@ -426,10 +410,12 @@ body {
     opacity: 1;
 }
 
-.session-btn.delete {
-    color: var(--vscode-editorError-foreground);
+.session-btn.delete svg {
+    color: var(--vscode-foreground);
+    width: 16px;
 }
 
-.session-btn.edit {
-    color: var(--vscode-editorInfo-foreground);
+.session-btn.edit svg {
+    color: var(--vscode-foreground);
+    width: 16px;
 }

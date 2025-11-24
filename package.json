@@ -88,18 +88,20 @@
         "vscode:prepublish": "npm run compile",
         "compile": "tsc -p ./ && npm run copy-assets",
         "watch": "tsc -watch -p ./",
-        "copy-media": "cp -r ./src/media/* ./dist/media/",
-        "copy-highlight": "cp ./node_modules/@highlightjs/cdn-assets/highlight.min.js ./dist/media/highlight.min.js && cp ./node_modules/@highlightjs/cdn-assets/styles/github-dark.min.css ./dist/media/highlight.min.css",
-        "copy-assets": "mkdir -p ./dist/media && npm run copy-media && npm run copy-highlight"
+        "copy-media": "cp -r ./src/media/* ./media/",
+        "copy-icons": "cp ./node_modules/lucide/dist/umd/lucide.min.js ./media/lucide.min.js",
+        "copy-highlight": "cp ./node_modules/@highlightjs/cdn-assets/highlight.min.js ./media/highlight.min.js && cp ./node_modules/@highlightjs/cdn-assets/styles/github-dark.min.css ./media/highlight.min.css",
+        "copy-assets": "mkdir -p ./media && npm run copy-media && npm run copy-highlight && npm run copy-icons"
     },
     "devDependencies": {
-        "@types/js-yaml": "^4.1.1",
+        "@types/js-yaml": "^4.0.9",
         "@types/node": "^24.10.1",
         "@types/vscode": "^1.98.0",
         "typescript": "^5.0.0"
     },
     "dependencies": {
         "@highlightjs/cdn-assets": "^11.11.1",
-        "js-yaml": "^4.1.1"
+        "js-yaml": "^4.1.1",
+        "lucide": "^0.554.0"
     }
 }
